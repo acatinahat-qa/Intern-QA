@@ -240,48 +240,46 @@
         );
 
         const rows = json.table.rows;
-        const cols = json.table.cols;
+        if (!rows || rows.length < 2) {
+          showEmpty();
+          return;
+        }
 
-        const colIndex = {};
-        cols.forEach((c, i) => {
-          colIndex[c.label.toLowerCase().trim()] = i;
-        });
+        // Read first row as headers since Google isn't parsing them automatically
+        const headerRow = rows[0].c.map(cell => cell && cell.v ? String(cell.v).trim().toLowerCase() : '');
+        const dataRows = rows.slice(1);
 
+        // Helper to get value by column name
         const get = (row, label) => {
-          const i = colIndex[label];
-          return (i !== undefined && row.c[i] && row.c[i].v != null)
+          const i = headerRow.indexOf(label.toLowerCase().trim());
+          return (i !== -1 && row.c[i] && row.c[i].v != null)
             ? String(row.c[i].v).trim()
             : '';
         };
 
-        const hasStatus = 'status' in colIndex;
-        const active = rows.filter(row => {
-          if (!hasStatus) return true;
-          return get(row, 'status').toLowerCase() === 'active';
+        // Filter active rows
+        const active = dataRows.filter(row => {
+          const status = get(row, 'status').toLowerCase();
+          return status === 'active' || status === '';
         });
 
         const container = document.getElementById('listings');
         const pill = document.getElementById('count-pill');
 
         if (active.length === 0) {
-          pill.textContent = '0 open internships';
-          container.innerHTML = `
-            <div class="state-box">
-              <strong>No listings right now</strong>
-              Check back soon — new internships are added every few hours.
-            </div>`;
+          showEmpty();
           return;
         }
 
         pill.textContent = `${active.length} open internship${active.length !== 1 ? 's' : ''}`;
 
         container.innerHTML = active.map(row => {
-          const rawTitle  = get(row, 'title')     || 'Internship';
+          const rawTitle  = get(row, 'title')      || 'Internship';
           const title     = rawTitle.split(/[-–|,]/)[0].trim();
-          const company   = get(row, 'company')   || '';
-          const applyLink = get(row, 'col_5')     || get(row, 'apply_link') || '#';
-          const location  = get(row, 'col_6')     || get(row, 'location')   || 'Qatar';
-          const postedAt  = get(row, 'posted_at') || '';
+          const company   = get(row, 'company')    || '';
+          const applyLink = get(row, 'apply_link') || '#';
+          const location  = get(row, 'location')   || 'Qatar';
+          const postedAt  = get(row, 'posted_at')  || '';
           const ago       = timeAgo(postedAt);
 
           return `
@@ -307,6 +305,15 @@
           </div>`;
         document.getElementById('count-pill').textContent = '—';
       }
+    }
+
+    function showEmpty() {
+      document.getElementById('count-pill').textContent = '0 open internships';
+      document.getElementById('listings').innerHTML = `
+        <div class="state-box">
+          <strong>No listings right now</strong>
+          Check back soon — new internships are added every few hours.
+        </div>`;
     }
 
     loadListings();
