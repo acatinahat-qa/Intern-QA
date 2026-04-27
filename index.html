@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>intern.qa — Internships in Qatar</title>
+  <meta name="description" content="The easiest way to find internships in Qatar. Updated automatically." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f2f2f0;
+      color: #111;
+      min-height: 100vh;
+    }
+
+    nav {
+      background: #1a1fd4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 24px;
+    }
+
+    nav img {
+      height: 80px;
+      width: 80px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .hero {
+      background: #1a1fd4;
+      padding: 4px 24px 52px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(26px, 5vw, 36px);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 24px;
+    }
+
+    .count-pill {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 20px;
+    }
+
+    .content {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      color: #999;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      border-left: 4px solid #1a1fd4;
+      padding: 18px 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .card-left { flex: 1; min-width: 0; }
+
+    .card-company {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1a1fd4;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 4px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #111;
+      letter-spacing: -0.3px;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 11px;
+      background: #f0f0ee;
+      color: #666;
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-weight: 500;
+    }
+
+    .badge-blue {
+      background: #e8e9fb;
+      color: #1a1fd4;
+    }
+
+    .apply-btn {
+      flex-shrink: 0;
+      background: #1a1fd4;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+
+    .apply-btn:hover { background: #1217a0; }
+
+    .state-box {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+      font-size: 15px;
+    }
+
+    .state-box strong {
+      display: block;
+      font-size: 18px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    footer {
+      background: #1a1fd4;
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    footer strong { color: rgba(255,255,255,0.85); font-weight: 600; }
+    footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+    footer a:hover { color: #fff; }
+
+    @media (max-width: 520px) {
+      .card { flex-direction: column; align-items: flex-start; }
+      .apply-btn { width: 100%; text-align: center; }
+      .card-title { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <img src="https://i.imgur.com/6au1hGw.jpg" alt="intern.qa" />
+  </nav>
+
+  <div class="hero">
+    <h1>Internships in Qatar,<br>All in One Place</h1>
+    <p>Updated automatically · No sign-up needed</p>
+    <div class="count-pill" id="count-pill">Loading...</div>
+  </div>
+
+  <div class="content">
+    <div class="section-label">Latest listings</div>
+    <div id="listings">
+      <div class="state-box">
+        <strong>Loading internships...</strong>
+        Fetching the latest listings for you.
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Auto-updated by <strong>intern.qa</strong> &nbsp;·&nbsp;
+    Follow us on Instagram
+    <a href="https://instagram.com/intern.qa" target="_blank"><strong>@intern.qa</strong></a>
+  </footer>
+
+  <script>
+    const SHEET_ID = '1eWIXS90FKtJ8ENCAxv8rg3xBJVkF4fLR7jPVM9_LzOY';
+    const SHEET_NAME = 'Sheet1';
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+    function timeAgo(dateStr) {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      if (isNaN(date)) return '';
+      const diff = Math.floor((Date.now() - date) / 1000);
+      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+      return `${Math.floor(diff / 86400)}d ago`;
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    async function loadListings() {
+      try {
+        const res = await fetch(url);
+        const text = await res.text();
+
+        // Strip Google's JSONP wrapper
+        const json = JSON.parse(
+          text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/)[1]
+        );
+
+        const rows = json.table.rows;
+        const cols = json.table.cols;
+
+        // Map column labels → indices (case-insensitive)
+        const colIndex = {};
+        cols.forEach((c, i) => {
+          colIndex[c.label.toLowerCase().trim()] = i;
+        });
+
+        const get = (row, label) => {
+          const i = colIndex[label];
+          return (i !== undefined && row.c[i] && row.c[i].v != null)
+            ? String(row.c[i].v).trim()
+            : '';
+        };
+
+        // If a "status" column exists, only show rows where status = "active"
+        // If the column doesn't exist yet, show everything
+        const hasStatus = 'status' in colIndex;
+        const active = rows.filter(row => {
+          if (!hasStatus) return true;
+          return get(row, 'status').toLowerCase() === 'active';
+        });
+
+        const container = document.getElementById('listings');
+        const pill = document.getElementById('count-pill');
+
+        if (active.length === 0) {
+          pill.textContent = '0 open internships';
+          container.innerHTML = `
+            <div class="state-box">
+              <strong>No listings right now</strong>
+              Check back soon — new internships are added every few hours.
+            </div>`;
+          return;
+        }
+
+        pill.textContent = `${active.length} open internship${active.length !== 1 ? 's' : ''}`;
+
+        container.innerHTML = active.map(row => {
+          const title     = get(row, 'title')     || 'Internship';
+          const company   = get(row, 'company')   || '';
+          const applyLink = get(row, 'col_5')     || get(row, 'apply_link') || '#';
+          const location  = get(row, 'col_6')     || get(row, 'location')   || 'Qatar';
+          const postedAt  = get(row, 'posted_at') || '';
+          const ago       = timeAgo(postedAt);
+
+          return `
+            <div class="card">
+              <div class="card-left">
+                ${company ? `<div class="card-company">${escHtml(company)}</div>` : ''}
+                <div class="card-title">${escHtml(title)}</div>
+                <div class="card-meta">
+                  <span class="badge badge-blue">${escHtml(location)}</span>
+                  ${ago ? `<span class="badge">Added ${ago}</span>` : ''}
+                </div>
+              </div>
+              <a class="apply-btn" href="${escHtml(applyLink)}" target="_blank" rel="noopener">Apply →</a>
+            </div>`;
+        }).join('');
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('listings').innerHTML = `
+          <div class="state-box">
+            <strong>Could not load listings</strong>
+            Make sure the Google Sheet is published to the web.
+          </div>`;
+        document.getElementById('count-pill').textContent = '—';
+      }
+    }
+
+    loadListings();
+  </script>
+
+</body>
+</html>
