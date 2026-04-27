@@ -235,7 +235,6 @@
         const res = await fetch(url);
         const text = await res.text();
 
-        // Strip Google's JSONP wrapper
         const json = JSON.parse(
           text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/)[1]
         );
@@ -243,7 +242,6 @@
         const rows = json.table.rows;
         const cols = json.table.cols;
 
-        // Map column labels → indices (case-insensitive)
         const colIndex = {};
         cols.forEach((c, i) => {
           colIndex[c.label.toLowerCase().trim()] = i;
@@ -256,8 +254,6 @@
             : '';
         };
 
-        // If a "status" column exists, only show rows where status = "active"
-        // If the column doesn't exist yet, show everything
         const hasStatus = 'status' in colIndex;
         const active = rows.filter(row => {
           if (!hasStatus) return true;
@@ -280,7 +276,8 @@
         pill.textContent = `${active.length} open internship${active.length !== 1 ? 's' : ''}`;
 
         container.innerHTML = active.map(row => {
-          const title     = get(row, 'title')     || 'Internship';
+          const rawTitle  = get(row, 'title')     || 'Internship';
+          const title     = rawTitle.split(/[-–|,]/)[0].trim();
           const company   = get(row, 'company')   || '';
           const applyLink = get(row, 'col_5')     || get(row, 'apply_link') || '#';
           const location  = get(row, 'col_6')     || get(row, 'location')   || 'Qatar';
@@ -291,13 +288,13 @@
             <div class="card">
               <div class="card-left">
                 ${company ? `<div class="card-company">${escHtml(company)}</div>` : ''}
-                <div class="card-title">${escHtml(title)}</div>
+                <div class="card-title">${escHtml(title)}${company ? ' | ' + escHtml(company) : ''}</div>
                 <div class="card-meta">
                   <span class="badge badge-blue">${escHtml(location)}</span>
                   ${ago ? `<span class="badge">Added ${ago}</span>` : ''}
                 </div>
               </div>
-              <a class="apply-btn" href="${escHtml(applyLink)}" target="_blank" rel="noopener">Apply →</a>
+              <a class="apply-btn" href="${escHtml(applyLink)}" target="_blank" rel="noopener noreferrer">Apply →</a>
             </div>`;
         }).join('');
 
