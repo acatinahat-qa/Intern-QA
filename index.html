@@ -210,7 +210,7 @@
   <script>
     const SHEET_ID = '1eWIXS90FKtJ8ENCAxv8rg3xBJVkF4fLR7jPVM9_LzOY';
     const SHEET_NAME = 'Sheet1';
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&nocache=${Date.now()}`;
 
     function timeAgo(dateStr) {
       if (!dateStr) return '';
